@@ -82,15 +82,18 @@
         .game-board {
             display: grid;
             grid-template-rows: repeat(6, 1fr);
-            gap: 6px;
-            margin-bottom: 24px;
-            padding: 0 8px;
+            gap: 8px;
+            margin-bottom: 32px;
+            padding: 16px 8px;
+            background: rgba(45, 55, 72, 0.3);
+            border-radius: 12px;
+            border: 1px solid #4a5568;
         }
 
         .guess-row {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
+            gap: 8px;
             justify-content: center;
         }
 
@@ -98,7 +101,7 @@
             aspect-ratio: 1;
             max-width: 62px;
             height: auto;
-            border: 2px solid #4a5568;
+            border: 2px solid #718096;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -114,8 +117,9 @@
 
         .letter-box.filled {
             border-color: #81e6d9;
-            background: #234e52;
-            transform: scale(1.05);
+            background: #2d3748;
+            transform: scale(1.02);
+            box-shadow: 0 0 0 1px #81e6d9;
         }
 
         .letter-box.correct {
@@ -800,7 +804,7 @@
             }
 
             resetStats() {
-                if (confirm('Are you sure you want to reset your stats?')) {
+                if (confirm('Are you sure you want to reset your statistics?')) {
                     this.stats = {
                         gamesPlayed: 0,
                         gamesWon: 0,
