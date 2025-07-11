@@ -12,46 +12,52 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'SF Pro Display', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
+            align-items: flex-start;
+            padding: 10px;
+            color: #e2e8f0;
         }
 
         .game-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 30px;
+            background: #1a202c;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            padding: 20px;
             max-width: 500px;
             width: 100%;
+            margin-top: 20px;
+            border: 1px solid #2d3748;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
 
         .title {
-            font-size: 2.5em;
-            font-weight: bold;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            font-size: 2.2em;
+            font-weight: 700;
+            background: linear-gradient(45deg, #81e6d9, #9f7aea);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
         }
 
         .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: #2d3748;
+            border-radius: 12px;
+            border: 1px solid #4a5568;
         }
 
         .stat {
@@ -59,159 +65,191 @@
         }
 
         .stat-number {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #667eea;
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #81e6d9;
+            margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 0.8em;
-            color: #666;
-            margin-top: 5px;
+            font-size: 0.75em;
+            color: #a0aec0;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
 
         .game-board {
             display: grid;
             grid-template-rows: repeat(6, 1fr);
-            gap: 5px;
-            margin-bottom: 20px;
+            gap: 6px;
+            margin-bottom: 24px;
+            padding: 0 8px;
         }
 
         .guess-row {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 5px;
+            gap: 6px;
+            justify-content: center;
         }
 
         .letter-box {
-            width: 60px;
-            height: 60px;
-            border: 2px solid #d1d5db;
+            aspect-ratio: 1;
+            max-width: 62px;
+            height: auto;
+            border: 2px solid #4a5568;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 1.5em;
-            font-weight: bold;
+            font-weight: 700;
             text-transform: uppercase;
             border-radius: 8px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #2d3748;
+            color: #e2e8f0;
+            justify-self: center;
         }
 
         .letter-box.filled {
-            border-color: #667eea;
-            background: #f0f4ff;
+            border-color: #81e6d9;
+            background: #234e52;
+            transform: scale(1.05);
         }
 
         .letter-box.correct {
-            background: #10b981;
+            background: #38a169;
             color: white;
-            border-color: #10b981;
+            border-color: #38a169;
         }
 
         .letter-box.present {
-            background: #f59e0b;
+            background: #d69e2e;
             color: white;
-            border-color: #f59e0b;
+            border-color: #d69e2e;
         }
 
         .letter-box.absent {
-            background: #6b7280;
-            color: white;
-            border-color: #6b7280;
+            background: #4a5568;
+            color: #a0aec0;
+            border-color: #4a5568;
         }
 
         .keyboard {
             display: grid;
             grid-template-rows: repeat(3, 1fr);
-            gap: 5px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 0 4px;
         }
 
         .keyboard-row {
             display: flex;
             justify-content: center;
-            gap: 5px;
+            gap: 6px;
         }
 
         .key {
-            padding: 10px 15px;
-            background: #e5e7eb;
+            padding: 14px 12px;
+            background: #4a5568;
             border: none;
-            border-radius: 5px;
-            font-size: 1em;
-            font-weight: bold;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
+            color: #e2e8f0;
+            min-width: 32px;
+            border: 1px solid #2d3748;
+            flex: 1;
+            max-width: 43px;
         }
 
         .key:hover {
-            background: #d1d5db;
+            background: #2d3748;
+            transform: translateY(-1px);
+        }
+
+        .key:active {
+            transform: translateY(0);
         }
 
         .key.correct {
-            background: #10b981;
+            background: #38a169;
             color: white;
+            border-color: #38a169;
         }
 
         .key.present {
-            background: #f59e0b;
+            background: #d69e2e;
             color: white;
+            border-color: #d69e2e;
         }
 
         .key.absent {
-            background: #6b7280;
-            color: white;
+            background: #2d3748;
+            color: #718096;
+            border-color: #2d3748;
         }
 
         .key.wide {
-            padding: 10px 20px;
-            font-size: 0.9em;
+            padding: 14px 16px;
+            font-size: 0.8em;
+            max-width: 65px;
+            flex: 1.5;
         }
 
         .controls {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
             border-radius: 8px;
-            font-size: 1em;
+            font-size: 0.9em;
             cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: bold;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
 
         .btn-primary {
-            background: #667eea;
-            color: white;
+            background: linear-gradient(135deg, #81e6d9, #9f7aea);
+            color: #1a202c;
         }
 
         .btn-primary:hover {
-            background: #5a6fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(129, 230, 217, 0.3);
         }
 
         .btn-secondary {
-            background: #e5e7eb;
-            color: #374151;
+            background: #4a5568;
+            color: #e2e8f0;
+            border: 1px solid #2d3748;
         }
 
         .btn-secondary:hover {
-            background: #d1d5db;
+            background: #2d3748;
+            transform: translateY(-1px);
         }
 
         .message {
             text-align: center;
-            padding: 15px;
+            padding: 16px;
             border-radius: 8px;
             margin-bottom: 20px;
-            font-weight: bold;
+            font-weight: 600;
             opacity: 0;
             transition: opacity 0.3s ease;
+            font-size: 0.9em;
         }
 
         .message.show {
@@ -219,34 +257,155 @@
         }
 
         .message.success {
-            background: #d1fae5;
-            color: #065f46;
+            background: rgba(56, 161, 105, 0.2);
+            color: #68d391;
+            border: 1px solid rgba(56, 161, 105, 0.3);
         }
 
         .message.error {
-            background: #fee2e2;
-            color: #991b1b;
+            background: rgba(245, 101, 101, 0.2);
+            color: #fc8181;
+            border: 1px solid rgba(245, 101, 101, 0.3);
         }
 
         .message.info {
-            background: #dbeafe;
-            color: #1e40af;
+            background: rgba(129, 230, 217, 0.2);
+            color: #81e6d9;
+            border: 1px solid rgba(129, 230, 217, 0.3);
         }
 
         @media (max-width: 480px) {
-            .game-container {
-                padding: 20px;
+            body {
+                padding: 8px;
             }
             
-            .letter-box {
-                width: 50px;
-                height: 50px;
+            .game-container {
+                padding: 16px;
+                margin-top: 10px;
+            }
+            
+            .title {
+                font-size: 1.8em;
+                margin-bottom: 12px;
+            }
+            
+            .stats {
+                padding: 12px;
+                gap: 8px;
+            }
+            
+            .stat-number {
                 font-size: 1.2em;
             }
             
+            .stat-label {
+                font-size: 0.7em;
+            }
+            
+            .letter-box {
+                font-size: 1.3em;
+                max-width: 56px;
+            }
+            
+            .keyboard {
+                gap: 6px;
+                padding: 0 2px;
+            }
+            
+            .keyboard-row {
+                gap: 4px;
+            }
+            
             .key {
-                padding: 8px 12px;
-                font-size: 0.9em;
+                padding: 12px 8px;
+                font-size: 0.8em;
+                min-width: 28px;
+                max-width: 38px;
+            }
+            
+            .key.wide {
+                padding: 12px 12px;
+                font-size: 0.75em;
+                max-width: 58px;
+            }
+            
+            .btn {
+                padding: 10px 18px;
+                font-size: 0.85em;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .game-container {
+                padding: 12px;
+            }
+            
+            .title {
+                font-size: 1.6em;
+            }
+            
+            .stats {
+                padding: 10px;
+                gap: 6px;
+            }
+            
+            .stat-number {
+                font-size: 1.1em;
+            }
+            
+            .stat-label {
+                font-size: 0.65em;
+            }
+            
+            .letter-box {
+                font-size: 1.2em;
+                max-width: 52px;
+            }
+            
+            .keyboard-row {
+                gap: 3px;
+            }
+            
+            .key {
+                padding: 10px 6px;
+                font-size: 0.75em;
+                min-width: 26px;
+                max-width: 34px;
+            }
+            
+            .key.wide {
+                padding: 10px 10px;
+                font-size: 0.7em;
+                max-width: 52px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.8em;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .game-container {
+                padding: 24px;
+                margin-top: 15px;
+            }
+            
+            .letter-box {
+                max-width: 58px;
+            }
+            
+            .key {
+                max-width: 40px;
+            }
+            
+            .key.wide {
+                max-width: 62px;
             }
         }
     </style>
