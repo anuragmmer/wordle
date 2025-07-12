@@ -1,7 +1,4 @@
-.toast.info {
-            background: #818384;
-            color: white;
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,11 +7,9 @@
     <meta name="keywords" content="wordle, word game, puzzle, guess, unlimited, free, mobile">
     <meta name="author" content="Anurag">
     
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="meta/icon.png">
     <link rel="apple-touch-icon" href="meta/icon.png">
     
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://anuragmmer.github.io/wordle/">
     <meta property="og:title" content="Unlimited Wordle - Free Word Guessing Game">
@@ -22,14 +17,12 @@
     <meta property="og:image" content="https://anuragmmer.github.io/wordle/meta/cover.png">
     <meta property="og:site_name" content="Unlimited Wordle">
     
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://anuragmmer.github.io/wordle/">
     <meta name="twitter:title" content="Unlimited Wordle - Free Word Guessing Game">
     <meta name="twitter:description" content="Play unlimited Wordle games! Guess the 5-letter word in 6 attempts. Clean interface, mobile-friendly, and completely free.">
     <meta name="twitter:image" content="https://anuragmmer.github.io/wordle/meta/cover.png">
     
-    <!-- Additional Meta -->
     <meta name="theme-color" content="#1a1a1a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -37,6 +30,7 @@
     <meta name="apple-mobile-web-app-title" content="Unlimited Wordle">
     
     <title>Unlimited Wordle - Free Word Guessing Game</title>
+    
     <style>
         * {
             margin: 0;
@@ -331,6 +325,11 @@
             color: white;
         }
 
+        .toast.info {
+            background: #818384;
+            color: white;
+        }
+
         .confirmation-overlay {
             position: fixed;
             top: 0;
@@ -433,7 +432,7 @@
             }
             
             .header {
-                margin-bottom: 12px;
+                margin-bottom: 16px;
             }
             
             .title {
@@ -444,7 +443,7 @@
             .stats {
                 padding: 10px;
                 gap: 6px;
-                margin-bottom: 12px;
+                margin-bottom: 16px;
             }
             
             .stat-number {
@@ -456,7 +455,7 @@
             }
             
             .game-board {
-                margin-bottom: 12px;
+                margin-bottom: 16px;
                 padding: 8px;
             }
             
@@ -467,13 +466,13 @@
             }
             
             .keyboard {
-                gap: 4px;
+                gap: 5px;
                 padding: 0;
-                margin-bottom: 60px;
+                margin-bottom: 50px;
             }
             
             .keyboard-row {
-                gap: 3px;
+                gap: 4px;
                 width: 100%;
             }
             
@@ -482,30 +481,30 @@
             }
             
             .key {
-                padding: 10px 6px;
-                font-size: 0.7rem;
-                min-width: 28px;
-                height: 42px;
+                padding: 12px 8px;
+                font-size: 0.8rem;
+                min-width: 32px;
+                height: 46px;
             }
             
             .key.wide {
-                min-width: 48px;
-                font-size: 0.65rem;
+                min-width: 52px;
+                font-size: 0.75rem;
             }
             
             .controls {
                 position: fixed;
-                bottom: 8px;
-                right: 8px;
+                bottom: 6px;
+                right: 6px;
                 flex-direction: row;
-                gap: 8px;
+                gap: 6px;
             }
             
             .btn {
-                padding: 8px 12px;
-                font-size: 0.75rem;
+                padding: 6px 10px;
+                font-size: 0.7rem;
                 width: auto;
-                height: 36px;
+                height: 32px;
                 border-radius: 4px;
                 display: flex;
                 align-items: center;
@@ -519,40 +518,24 @@
             }
             
             .btn-secondary {
-                padding: 8px;
+                padding: 6px;
                 font-size: 0;
-                width: 36px;
-                height: 36px;
+                width: 32px;
+                height: 32px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
             }
             
-            .btn-primary::before {
-                content: none;
-            }
-            
             .btn-secondary::before {
                 content: "🔄";
-                font-size: 16px;
+                font-size: 14px;
             }
             
             .toast {
                 top: 15px;
                 padding: 10px 20px;
-            }
-            
-            .header {
-                margin-bottom: 16px;
-            }
-            
-            .stats {
-                margin-bottom: 16px;
-            }
-            
-            .game-board {
-                margin-bottom: 16px;
             }
         }
 
@@ -640,14 +623,6 @@
                 margin-bottom: 50px;
             }
             
-            .keyboard-row {
-                width: 100%;
-            }
-            
-            .keyboard-row:nth-child(2) {
-                padding: 0 10px;
-            }
-            
             .key {
                 height: 38px;
                 padding: 8px 4px;
@@ -690,19 +665,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="confirmation-overlay" id="confirmationOverlay">
-            <div class="confirmation-dialog">
-                <div class="confirmation-title">Reset Statistics</div>
-                <div class="confirmation-message">Are you sure you want to reset all your game statistics? This action cannot be undone.</div>
-                <div class="confirmation-buttons">
-                    <button class="confirmation-btn confirmation-btn-secondary" onclick="game.hideConfirmation()">Cancel</button>
-                    <button class="confirmation-btn confirmation-btn-primary" onclick="game.confirmReset()">Reset</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="toast" id="message"></div>
 
         <div class="game-board" id="gameBoard"></div>
 
@@ -748,6 +710,19 @@
             <button class="btn btn-secondary" id="resetStats">Reset Stats</button>
         </div>
     </div>
+
+    <div class="confirmation-overlay" id="confirmationOverlay">
+        <div class="confirmation-dialog">
+            <div class="confirmation-title">Reset Statistics</div>
+            <div class="confirmation-message">Are you sure you want to reset all your game statistics? This action cannot be undone.</div>
+            <div class="confirmation-buttons">
+                <button class="confirmation-btn confirmation-btn-secondary" onclick="game.hideConfirmation()">Cancel</button>
+                <button class="confirmation-btn confirmation-btn-primary" onclick="game.confirmReset()">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="message"></div>
 
     <script>
         let WORD_LIST = [];
