@@ -3,7 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Unlimited Wordle</title>
+    <meta name="description" content="Play unlimited Wordle games! Guess the 5-letter word in 6 attempts. Clean interface, mobile-friendly, and completely free.">
+    <meta name="keywords" content="wordle, word game, puzzle, guess, unlimited, free, mobile">
+    <meta name="author" content="Anurag">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="meta/icon.png">
+    <link rel="apple-touch-icon" href="meta/icon.png">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://anuragmmer.github.io/wordle/">
+    <meta property="og:title" content="Unlimited Wordle - Free Word Guessing Game">
+    <meta property="og:description" content="Play unlimited Wordle games! Guess the 5-letter word in 6 attempts. Clean interface, mobile-friendly, and completely free.">
+    <meta property="og:image" content="https://anuragmmer.github.io/wordle/meta/cover.png">
+    <meta property="og:site_name" content="Unlimited Wordle">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://anuragmmer.github.io/wordle/">
+    <meta name="twitter:title" content="Unlimited Wordle - Free Word Guessing Game">
+    <meta name="twitter:description" content="Play unlimited Wordle games! Guess the 5-letter word in 6 attempts. Clean interface, mobile-friendly, and completely free.">
+    <meta name="twitter:image" content="https://anuragmmer.github.io/wordle/meta/cover.png">
+    
+    <!-- Additional Meta -->
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Unlimited Wordle">
+    
+    <title>Unlimited Wordle - Free Word Guessing Game</title>
     <style>
         * {
             margin: 0;
@@ -451,7 +481,7 @@
         @media (max-height: 700px) and (max-width: 480px) {
             .title {
                 font-size: 1.4em;
-                margin-bottom: 12px;
+                margin-bottom: 6px;
             }
             
             .header {
@@ -880,7 +910,7 @@
             }
 
             resetStats() {
-                if (confirm('Are you sure you want to reset your stats?')) {
+                if (confirm('Are you sure you want to reset your statistics?')) {
                     this.stats = {
                         gamesPlayed: 0,
                         gamesWon: 0,
