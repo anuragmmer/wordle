@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+.toast.info {
+            background: #818384;
+            color: white;
+        }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -328,9 +331,90 @@
             color: white;
         }
 
-        .toast.info {
-            background: #818384;
+        .confirmation-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .confirmation-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .confirmation-dialog {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 90vw;
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .confirmation-overlay.show .confirmation-dialog {
+            transform: scale(1) translateY(0);
+        }
+
+        .confirmation-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .confirmation-message {
+            color: #a0a0a0;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .confirmation-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .confirmation-btn-primary {
+            background: #787c7e;
             color: white;
+        }
+
+        .confirmation-btn-primary:hover {
+            background: #6e6e70;
+        }
+
+        .confirmation-btn-secondary {
+            background: #4a4a4a;
+            color: #ffffff;
+        }
+
+        .confirmation-btn-secondary:hover {
+            background: #3a3a3a;
         }
 
         @media (max-width: 480px) {
@@ -528,7 +612,7 @@
         @media (max-height: 700px) and (max-width: 480px) {
             .title {
                 font-size: 1.4em;
-                margin-bottom: 12px;
+                margin-bottom: 6px;
             }
             
             .header {
@@ -603,6 +687,17 @@
                 <div class="stat">
                     <div class="stat-number" id="currentStreak">0</div>
                     <div class="stat-label">Streak</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="confirmation-overlay" id="confirmationOverlay">
+            <div class="confirmation-dialog">
+                <div class="confirmation-title">Reset Statistics</div>
+                <div class="confirmation-message">Are you sure you want to reset all your game statistics? This action cannot be undone.</div>
+                <div class="confirmation-buttons">
+                    <button class="confirmation-btn confirmation-btn-secondary" onclick="game.hideConfirmation()">Cancel</button>
+                    <button class="confirmation-btn confirmation-btn-primary" onclick="game.confirmReset()">Reset</button>
                 </div>
             </div>
         </div>
@@ -957,18 +1052,31 @@
             }
 
             resetStats() {
-                if (confirm('Are you sure you want to reset your statistics?')) {
-                    this.stats = {
-                        gamesPlayed: 0,
-                        gamesWon: 0,
-                        currentStreak: 0,
-                        maxStreak: 0,
-                        guessDistribution: [0, 0, 0, 0, 0, 0]
-                    };
-                    this.saveStats();
-                    this.updateStatsDisplay();
-                    this.showMessage('Statistics reset!', 'info');
-                }
+                this.showConfirmation();
+            }
+
+            showConfirmation() {
+                const overlay = document.getElementById('confirmationOverlay');
+                overlay.classList.add('show');
+            }
+
+            hideConfirmation() {
+                const overlay = document.getElementById('confirmationOverlay');
+                overlay.classList.remove('show');
+            }
+
+            confirmReset() {
+                this.stats = {
+                    gamesPlayed: 0,
+                    gamesWon: 0,
+                    currentStreak: 0,
+                    maxStreak: 0,
+                    guessDistribution: [0, 0, 0, 0, 0, 0]
+                };
+                this.saveStats();
+                this.updateStatsDisplay();
+                this.hideConfirmation();
+                this.showMessage('Statistics reset!', 'info');
             }
         }
 
