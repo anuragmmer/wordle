@@ -35,7 +35,6 @@
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
@@ -50,6 +49,7 @@
             color: #ffffff;
             position: relative;
             overflow-x: hidden;
+            box-sizing: border-box;
         }
 
         .game-container {
@@ -62,6 +62,7 @@
             min-height: calc(100dvh - 40px);
             display: flex;
             flex-direction: column;
+            box-sizing: border-box;
         }
 
         .header {
@@ -85,6 +86,7 @@
             padding: 12px;
             background: #2a2a2a;
             border-radius: 8px;
+            box-sizing: border-box;
         }
 
         .stat {
@@ -361,6 +363,7 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             transform: scale(0.9) translateY(20px);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
         }
 
         .confirmation-overlay.show .confirmation-dialog {
@@ -595,7 +598,7 @@
         @media (max-height: 700px) and (max-width: 480px) {
             .title {
                 font-size: 1.4em;
-                margin-bottom: 6px;
+                margin-bottom: 14px;
             }
             
             .header {
