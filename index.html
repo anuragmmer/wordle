@@ -151,7 +151,7 @@
             grid-template-rows: repeat(3, 1fr);
             gap: 6px;
             margin-bottom: 80px;
-            padding: 0 4px;
+            padding: 0;
             max-width: 484px;
             margin-left: auto;
             margin-right: auto;
@@ -162,6 +162,11 @@
             display: flex;
             justify-content: center;
             gap: 6px;
+            width: 100%;
+        }
+
+        .keyboard-row:nth-child(2) {
+            padding: 0 15px;
         }
 
         .key {
@@ -180,6 +185,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex: 0 0 auto;
         }
 
         .key:hover {
@@ -339,6 +345,11 @@
             
             .keyboard-row {
                 gap: 3px;
+                width: 100%;
+            }
+            
+            .keyboard-row:nth-child(2) {
+                padding: 0 12px;
             }
             
             .key {
@@ -456,6 +467,14 @@
             .keyboard {
                 gap: 3px;
                 margin-bottom: 50px;
+            }
+            
+            .keyboard-row {
+                width: 100%;
+            }
+            
+            .keyboard-row:nth-child(2) {
+                padding: 0 10px;
             }
             
             .key {
@@ -883,7 +902,7 @@
             }
 
             resetStats() {
-                if (confirm('Are you sure you want to reset your stats?')) {
+                if (confirm('Are you sure you want to reset your statistics?')) {
                     this.stats = {
                         gamesPlayed: 0,
                         gamesWon: 0,
