@@ -30,1052 +30,1194 @@
     <meta name="apple-mobile-web-app-title" content="Unlimited Wordle">
     
     <title>Unlimited Wordle - Free Word Guessing Game</title>
-    
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
+        /* ── Variables ─────────────────────────────────────────── */
+        :root {
+            --bg:          #1a1a1a;
+            --surface:     #252525;
+            --surface2:    #2e2e2e;
+            --border:      #333333;
+            --border-fill: #555555;
+            --correct:     #4caf82;
+            --present:     #e8a838;
+            --absent:      #222222;
+            --text:        #eceef5;
+            --muted:       #666666;
+            --key-bg:      #2d2d2d;
+            --key-text:    #cccccc;
+
+            --header-h:  60px;
+            --stats-h:   62px;
+            --kbd-h:     196px;
+            --overhead:  calc(var(--header-h) + var(--stats-h) + var(--kbd-h) + 28px);
         }
+
+        /* ── Reset ──────────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-            background: #1a1a1a;
-            min-height: 100vh;
-            min-height: 100dvh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 20px;
-            color: #ffffff;
-            position: relative;
-            overflow-x: hidden;
-            box-sizing: border-box;
-        }
-
-        .game-container {
-            background: #1a1a1a;
-            padding: 20px;
-            max-width: 500px;
-            width: 100%;
-            margin-top: 20px;
-            min-height: calc(100vh - 40px);
-            min-height: calc(100dvh - 40px);
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             display: flex;
             flex-direction: column;
-            box-sizing: border-box;
+            height: 100dvh;
+            max-height: 100dvh;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
+        /* ── Header ─────────────────────────────────────────────── */
         .header {
-            text-align: center;
-            margin-bottom: 20px;
+            height: var(--header-h);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 14px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
         }
 
-        .title {
-            font-size: 2.2em;
+        .header-side { display: flex; gap: 6px; width: 80px; }
+        .header-side.right { justify-content: flex-end; }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--muted);
+            border-radius: 9px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-family: 'Manrope', sans-serif;
             font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 16px;
-            letter-spacing: -0.02em;
+            transition: background 0.15s, color 0.15s;
         }
+        .icon-btn:active { background: var(--surface2); color: var(--text); }
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 20px;
-            padding: 12px;
-            background: #2a2a2a;
-            border-radius: 8px;
-            box-sizing: border-box;
-        }
-
-        .stat {
+        .game-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 30px;
+            letter-spacing: 5px;
+            color: var(--text);
             text-align: center;
         }
 
-        .stat-number {
-            font-size: 1.4em;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 4px;
+        /* ── Stats bar ──────────────────────────────────────────── */
+        .stats-bar {
+            height: var(--stats-h);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            gap: 0;
+        }
+
+        .stat-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .stat-value {
+            font-size: 21px;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--text);
         }
 
         .stat-label {
-            font-size: 0.75em;
-            color: #888888;
-            font-weight: 500;
+            font-size: 9.5px;
+            font-weight: 700;
+            color: var(--muted);
             text-transform: uppercase;
-            letter-spacing: 0.025em;
+            letter-spacing: 0.07em;
         }
 
-        .game-board {
+        .stat-sep {
+            width: 1px;
+            height: 28px;
+            background: var(--border);
+            margin: 0 6px;
+            flex-shrink: 0;
+        }
+
+        /* ── Board ──────────────────────────────────────────────── */
+        .board-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 12px;
+            overflow: hidden;
+        }
+
+        .board {
+            width: min(
+                calc(100vw - 28px),
+                calc((100dvh - var(--overhead)) * 5 / 6)
+            );
+            max-width: 338px;
+            aspect-ratio: 5 / 6;
             display: grid;
             grid-template-rows: repeat(6, 1fr);
             gap: 5px;
-            margin-bottom: 24px;
-            padding: 16px;
-            background: #1a1a1a;
-            max-width: 350px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
-        .guess-row {
+        .tile-row {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 5px;
         }
 
-        .letter-box {
-            width: 62px;
-            height: 62px;
-            border: 2px solid #3a3a3a;
+        .tile {
+            border: 2px solid var(--border);
+            border-radius: 5px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 2rem;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
             font-weight: 700;
+            font-size: clamp(14px, 5vw, 26px);
             text-transform: uppercase;
-            border-radius: 0;
-            transition: all 0.15s ease;
-            background: #1a1a1a;
-            color: #ffffff;
+            color: var(--text);
+            background: transparent;
+            transition: border-color 0.1s;
+            will-change: transform;
         }
 
-        .letter-box.filled {
-            border-color: #565656;
-            background: #1a1a1a;
+        .tile.filled { border-color: var(--border-fill); }
+
+        /* Pop on type */
+        .tile.pop { animation: tilePop 0.1s ease; }
+        @keyframes tilePop {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.12); }
+            100% { transform: scale(1); }
         }
 
-        .letter-box.correct {
-            background: #6aaa64;
-            color: white;
-            border-color: #6aaa64;
+        /* Shake on invalid */
+        .tile.shake { animation: tileShake 0.48s ease; }
+        @keyframes tileShake {
+            0%, 100%  { transform: translateX(0); }
+            12%  { transform: translateX(-7px); }
+            25%  { transform: translateX(7px); }
+            37%  { transform: translateX(-5px); }
+            50%  { transform: translateX(5px); }
+            62%  { transform: translateX(-3px); }
+            75%  { transform: translateX(3px); }
+            87%  { transform: translateX(-1px); }
         }
 
-        .letter-box.present {
-            background: #c9b458;
-            color: white;
-            border-color: #c9b458;
+        /* Flip reveal */
+        .tile.flip { animation: tileFlip 0.5s ease; }
+        @keyframes tileFlip {
+            0%  { transform: scaleY(1); }
+            45% { transform: scaleY(0.02); }
+            55% { transform: scaleY(0.02); }
+            100% { transform: scaleY(1); }
         }
 
-        .letter-box.absent {
-            background: #787c7e;
-            color: white;
-            border-color: #787c7e;
+        /* Win bounce */
+        .tile.bounce { animation: tileBounce 0.55s ease; }
+        @keyframes tileBounce {
+            0%   { transform: translateY(0); }
+            28%  { transform: translateY(-22px); }
+            55%  { transform: translateY(-10px); }
+            75%  { transform: translateY(-5px); }
+            90%  { transform: translateY(-2px); }
+            100% { transform: translateY(0); }
         }
 
-        .letter-box.shake {
-            animation: shake 0.5s ease-in-out;
-        }
+        /* States */
+        .tile.correct { background: var(--correct); border-color: var(--correct); color: #fff; }
+        .tile.present { background: var(--present); border-color: var(--present); color: #fff; }
+        .tile.absent  { background: var(--absent);  border-color: var(--absent);  color: var(--muted); }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+        /* ── Keyboard ───────────────────────────────────────────── */
+        .keyboard-container {
+            height: var(--kbd-h);
+            padding: 8px 10px 16px;
+            flex-shrink: 0;
         }
 
         .keyboard {
-            display: grid;
-            grid-template-rows: repeat(3, 1fr);
-            gap: 6px;
-            margin-bottom: 80px;
-            padding: 0;
-            max-width: 484px;
-            margin-left: auto;
-            margin-right: auto;
-            flex-shrink: 0;
-            transform: translateX(-5px);
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            height: 100%;
         }
 
-        .keyboard-row {
+        .kbd-row {
             display: flex;
             justify-content: center;
-            gap: 6px;
-            width: 100%;
-        }
-
-        .keyboard-row:nth-child(2) {
-            margin-left: 2px;
-        }
-
-        .keyboard-row:nth-child(3) {
-            padding: 0 0;
+            gap: 5px;
+            flex: 1;
         }
 
         .key {
-            padding: 14px 12px;
-            background: #818384;
-            border: none;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.1s ease;
-            text-transform: uppercase;
-            color: #ffffff;
-            min-width: 43px;
+            flex: 1;
             max-width: 43px;
-            height: 58px;
+            height: 100%;
+            border: none;
+            border-radius: 7px;
+            background: var(--key-bg);
+            color: var(--key-text);
+            font-family: 'Manrope', sans-serif;
+            font-size: 12.5px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex: 0 0 auto;
-            -webkit-tap-highlight-color: transparent;
+            transition: background 0.15s, color 0.15s, transform 0.08s;
             touch-action: manipulation;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
+            letter-spacing: 0.01em;
         }
+        .key:active { transform: scale(0.94); }
+        .key.wide { max-width: 64px; font-size: 11px; letter-spacing: 0.04em; }
 
-        .key:hover {
-            background: #9a9a9c;
-        }
+        .key.correct { background: var(--correct); color: #fff; }
+        .key.present { background: var(--present); color: #fff; }
+        .key.absent  { background: #181b26; color: #333752; }
 
-        .key:active {
-            background: #6e6e70;
-        }
-
-        .key.correct {
-            background: #6aaa64;
-            color: white;
-        }
-
-        .key.present {
-            background: #c9b458;
-            color: white;
-        }
-
-        .key.absent {
-            background: #3a3a3c;
-            color: #ffffff;
-        }
-
-        .key.wide {
-            min-width: 65px;
-            max-width: 65px;
-            font-size: 0.75rem;
-        }
-
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.1s ease;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .btn-primary {
-            background: #6aaa64;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #5d9556;
-        }
-
-        .btn-secondary {
-            background: #818384;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #6e6e70;
-        }
-
+        /* ── Toast ──────────────────────────────────────────────── */
         .toast {
             position: fixed;
-            top: 20px;
+            top: calc(var(--header-h) + 16px);
             left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.9em;
+            transform: translateX(-50%) translateY(-8px);
+            background: var(--text);
+            color: var(--bg);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 13.5px;
             z-index: 1000;
             opacity: 0;
-            transform: translateX(-50%) translateY(-20px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            max-width: 90vw;
+            transition: opacity 0.2s, transform 0.2s;
+            pointer-events: none;
+            white-space: nowrap;
+            max-width: 88vw;
             text-align: center;
+            letter-spacing: 0.01em;
         }
-
         .toast.show {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
 
-        .toast.success {
-            background: #6aaa64;
-            color: white;
-        }
-
-        .toast.error {
-            background: #787c7e;
-            color: white;
-        }
-
-        .toast.info {
-            background: #818384;
-            color: white;
-        }
-
-        .confirmation-overlay {
+        /* ── Modal (slide-up sheet) ──────────────────────────────── */
+        .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            inset: 0;
+            background: rgba(5, 6, 12, 0.75);
             display: flex;
+            align-items: flex-end;
             justify-content: center;
-            align-items: center;
             z-index: 2000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.28s, visibility 0.28s;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: 22px 22px 0 0;
+            padding: 20px 24px 42px;
+            width: 100%;
+            max-width: 480px;
+            transform: translateY(100%);
+            transition: transform 0.38s cubic-bezier(0.34, 1.42, 0.64, 1);
+            max-height: 92dvh;
+            overflow-y: auto;
+        }
+        .modal-overlay.show .modal { transform: translateY(0); }
+
+        .modal-handle {
+            width: 38px; height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 0 auto 22px;
         }
 
-        .confirmation-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .confirmation-dialog {
-            background: #2a2a2a;
-            border-radius: 8px;
-            padding: 24px;
-            max-width: 90vw;
-            width: 320px;
+        .modal-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            letter-spacing: 3px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            transform: scale(0.9) translateY(20px);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-sizing: border-box;
+            margin-bottom: 22px;
+            color: var(--text);
         }
 
-        .confirmation-overlay.show .confirmation-dialog {
-            transform: scale(1) translateY(0);
+        /* Stats modal */
+        .modal-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 26px;
         }
 
-        .confirmation-title {
-            font-size: 1.2em;
+        .m-stat {
+            background: var(--surface2);
+            border-radius: 12px;
+            padding: 14px 8px;
+            text-align: center;
+        }
+
+        .m-stat-value {
+            font-size: 30px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .m-stat-label {
+            font-size: 8.5px;
             font-weight: 700;
-            color: #ffffff;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .dist-section-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
             margin-bottom: 12px;
         }
 
-        .confirmation-message {
-            color: #a0a0a0;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        .confirmation-buttons {
+        .dist-row {
             display: flex;
-            gap: 12px;
-            justify-content: center;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 7px;
         }
 
-        .confirmation-btn {
-            padding: 10px 20px;
-            border: none;
+        .dist-num {
+            font-size: 12.5px;
+            font-weight: 700;
+            width: 13px;
+            text-align: right;
+            color: var(--muted);
+            flex-shrink: 0;
+        }
+
+        .dist-track {
+            flex: 1;
+            height: 24px;
+            background: var(--surface2);
             border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.1s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
+            overflow: hidden;
         }
 
-        .confirmation-btn-primary {
-            background: #787c7e;
+        .dist-fill {
+            height: 100%;
+            background: var(--correct);
+            border-radius: 4px;
+            min-width: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 7px;
+            font-size: 12px;
+            font-weight: 800;
             color: white;
+            transition: width 0.7s ease 0.1s;
         }
 
-        .confirmation-btn-primary:hover {
-            background: #6e6e70;
+        .dist-fill.current-win { background: var(--present); }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
         }
 
-        .confirmation-btn-secondary {
-            background: #4a4a4a;
-            color: #ffffff;
+        .m-btn {
+            flex: 1;
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+        .m-btn:active { transform: scale(0.97); }
+        .m-btn-primary  { background: var(--correct); color: #fff; }
+        .m-btn-secondary {
+            background: var(--surface2);
+            color: var(--muted);
+            border: 1px solid var(--border);
         }
 
-        .confirmation-btn-secondary:hover {
-            background: #3a3a3a;
+        /* Help modal */
+        .help-rule { font-size: 13.5px; color: var(--muted); line-height: 1.55; margin-bottom: 16px; }
+        .help-rule strong { color: var(--text); }
+        .help-divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+        .help-eg {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
         }
 
-        @media (max-width: 480px) {
-            body {
-                padding: 8px;
-                min-height: 100vh;
-                min-height: 100dvh;
-            }
-            
-            .game-container {
-                padding: 12px;
-                margin-top: 0;
-                min-height: calc(100vh - 16px);
-                min-height: calc(100dvh - 16px);
-                justify-content: space-between;
-            }
-            
-            .header {
-                margin-bottom: 16px;
-            }
-            
-            .title {
-                font-size: 1.6em;
-                margin-bottom: 12px;
-            }
-            
-            .stats {
-                padding: 10px;
-                gap: 6px;
-                margin-bottom: 16px;
-            }
-            
-            .stat-number {
-                font-size: 1.1em;
-            }
-            
-            .stat-label {
-                font-size: 0.65em;
-            }
-            
-            .game-board {
-                margin-bottom: 16px;
-                padding: 8px;
-            }
-            
-            .letter-box {
-                width: 50px;
-                height: 50px;
-                font-size: 1.4rem;
-            }
-            
-            .keyboard {
-                gap: 5px;
-                padding: 0;
-                margin-bottom: 50px;
-            }
-            
-            .keyboard-row {
-                gap: 4px;
-                width: 100%;
-            }
-            
-            .keyboard {
-                transform: translateX(-4px);
-            }
+        .help-tile {
+            width: 42px; height: 42px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .help-tile.correct { background: var(--correct); color: #fff; }
+        .help-tile.present { background: var(--present); color: #fff; }
+        .help-tile.absent  { background: var(--absent);  color: var(--muted); border: 2px solid var(--border-fill); }
+        .help-eg-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+        .help-eg-text strong { color: var(--text); }
 
-            .keyboard-row:nth-child(2) {
-                margin-left: 2px;
-            }
+        /* ── Confirm dialog ─────────────────────────────────────── */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 6, 12, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .confirm-overlay.show { opacity: 1; visibility: visible; }
 
-            .keyboard-row:nth-child(3) {
-                padding: 0 0;
+        .confirm-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 26px 24px 24px;
+            width: min(320px, 90vw);
+            transform: scale(0.9) translateY(12px);
+            transition: transform 0.26s cubic-bezier(0.34, 1.5, 0.64, 1);
+        }
+        .confirm-overlay.show .confirm-box { transform: scale(1) translateY(0); }
+
+        .confirm-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        .confirm-msg { font-size: 13.5px; color: var(--muted); line-height: 1.55; margin-bottom: 22px; }
+        .confirm-btns { display: flex; gap: 10px; }
+        .confirm-btn {
+            flex: 1; height: 46px;
+            border: none; border-radius: 10px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px; font-weight: 800;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .confirm-btn-cancel { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+        .confirm-btn-danger { background: #d94f4f; color: #fff; }
+        .confirm-btn-primary-action { background: var(--correct); color: #fff; }
+
+        /* ── Loading ────────────────────────────────────────────── */
+        .loading-screen {
+            position: fixed; inset: 0;
+            background: var(--bg);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 20px; z-index: 9999;
+            transition: opacity 0.4s;
+        }
+        .loading-screen.fade-out { opacity: 0; pointer-events: none; }
+
+        .loading-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px; letter-spacing: 8px;
+            color: var(--text);
+        }
+
+        .spinner {
+            width: 26px; height: 26px;
+            border: 3px solid var(--border);
+            border-top-color: var(--correct);
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Responsive tweaks ──────────────────────────────────── */
+        @media (min-height: 720px) {
+            :root { --kbd-h: 210px; }
+        }
+
+        @media (max-height: 640px) {
+            :root {
+                --header-h: 52px;
+                --stats-h:  52px;
+                --kbd-h:    168px;
             }
-            
-            .key {
-                padding: 12px 8px;
-                font-size: 0.8rem;
-                min-width: 32px;
-                max-width: 32px;
-                height: 46px;
-            }
-            
-            .key.wide {
-                min-width: 52px;
-                max-width: 52px;
-                font-size: 0.75rem;
-            }
-            
-            .controls {
-                position: fixed;
-                bottom: 6px;
-                right: 6px;
-                flex-direction: row;
-                gap: 6px;
-            }
-            
-            .btn {
-                padding: 6px 10px;
-                font-size: 0.7rem;
-                width: auto;
-                height: 32px;
-                border-radius: 4px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                white-space: nowrap;
-            }
-            
-            .btn-primary {
-                background: #6aaa64;
-                color: white;
-            }
-            
-            .btn-secondary {
-                padding: 6px;
-                font-size: 0;
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .btn-secondary::before {
-                content: "🔄";
-                font-size: 14px;
-            }
-            
-            .toast {
-                top: 15px;
-                padding: 10px 20px;
-            }
+            .stat-value { font-size: 18px; }
+            .stat-label { font-size: 8.5px; }
+            .game-title { font-size: 26px; }
+            .keyboard-container { padding: 6px 10px 10px; }
+            .keyboard { gap: 5px; }
+            .key { font-size: 11.5px; }
         }
 
         @media (max-width: 360px) {
-            .game-container {
-                padding: 8px;
-            }
-            
-            .title {
-                font-size: 1.5em;
-            }
-            
-            .stats {
-                padding: 8px;
-                gap: 4px;
-            }
-            
-            .game-board {
-                padding: 4px;
-            }
-            
-            .letter-box {
-                width: 46px;
-                height: 46px;
-                font-size: 1.3rem;
-            }
-            
-            .key {
-                min-width: 30px;
-                height: 44px;
-                padding: 10px 6px;
-                font-size: 0.75rem;
-            }
-            
-            .key.wide {
-                min-width: 50px;
-                font-size: 0.7rem;
-            }
-            
-            .btn {
-                padding: 5px 8px;
-                font-size: 0.65rem;
-                height: 28px;
-            }
-            
-            .btn-secondary {
-                padding: 5px;
-                width: 28px;
-                height: 28px;
-            }
-            
-            .btn-secondary::before {
-                font-size: 12px;
-            }
-        }
-
-        @media (max-height: 700px) and (max-width: 480px) {
-            .title {
-                font-size: 1.4em;
-                margin-bottom: 6px;
-            }
-            
-            .header {
-                margin-bottom: 8px;
-            }
-            
-            .stats {
-                margin-bottom: 8px;
-                padding: 8px;
-            }
-            
-            .game-board {
-                margin-bottom: 8px;
-                padding: 4px;
-            }
-            
-            .letter-box {
-                width: 46px;
-                height: 46px;
-                font-size: 1.2rem;
-            }
-            
-            .keyboard {
-                gap: 3px;
-                margin-bottom: 50px;
-            }
-            
-            .key {
-                height: 38px;
-                padding: 8px 4px;
-            }
-        }
-
-        @media (min-width: 481px) and (max-width: 768px) {
-            .game-container {
-                padding: 24px;
-                margin-top: 15px;
-            }
-            
-            .letter-box {
-                width: 60px;
-                height: 60px;
-            }
+            .key { max-width: 36px; font-size: 11px; }
+            .key.wide { max-width: 56px; }
+            .kbd-row { gap: 4px; }
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="header">
-            <h1 class="title">Unlimited Wordle</h1>
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-number" id="gamesPlayed">0</div>
-                    <div class="stat-label">Games</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" id="gamesWon">0</div>
-                    <div class="stat-label">Wins</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" id="winPercentage">0%</div>
-                    <div class="stat-label">Win Rate</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" id="currentStreak">0</div>
-                    <div class="stat-label">Streak</div>
-                </div>
-            </div>
+
+<!-- Loading screen -->
+<div class="loading-screen" id="loadingScreen">
+    <div class="loading-title">WORDLE</div>
+    <div class="spinner"></div>
+</div>
+
+<!-- Header -->
+<header class="header">
+    <div class="header-side">
+        <button class="icon-btn" id="helpBtn" aria-label="How to play">?</button>
+    </div>
+    <h1 class="game-title">WORDLE</h1>
+    <div class="header-side right">
+        <button class="icon-btn" id="statsBtn" aria-label="Statistics" title="Statistics">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <rect x="2" y="14" width="4" height="8" rx="1"/><rect x="9" y="8" width="4" height="14" rx="1"/><rect x="16" y="2" width="4" height="20" rx="1"/>
+            </svg>
+        </button>
+        <button class="icon-btn" id="newGameBtn" aria-label="New game" title="New Game">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+        </button>
+    </div>
+</header>
+
+<!-- Stats strip -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-value" id="sGames">0</div>
+        <div class="stat-label">Games</div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item">
+        <div class="stat-value" id="sWins">0</div>
+        <div class="stat-label">Wins</div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item">
+        <div class="stat-value" id="sWinPct">0%</div>
+        <div class="stat-label">Win %</div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item">
+        <div class="stat-value" id="sStreak">0</div>
+        <div class="stat-label">Streak</div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item">
+        <div class="stat-value" id="sBest">0</div>
+        <div class="stat-label">Best</div>
+    </div>
+</div>
+
+<!-- Board -->
+<div class="board-container">
+    <div class="board" id="board" role="grid" aria-label="Wordle game board"></div>
+</div>
+
+<!-- Keyboard -->
+<div class="keyboard-container">
+    <div class="keyboard" id="keyboard" role="group" aria-label="On-screen keyboard">
+        <div class="kbd-row">
+            <button class="key" data-key="Q">Q</button>
+            <button class="key" data-key="W">W</button>
+            <button class="key" data-key="E">E</button>
+            <button class="key" data-key="R">R</button>
+            <button class="key" data-key="T">T</button>
+            <button class="key" data-key="Y">Y</button>
+            <button class="key" data-key="U">U</button>
+            <button class="key" data-key="I">I</button>
+            <button class="key" data-key="O">O</button>
+            <button class="key" data-key="P">P</button>
         </div>
-
-        <div class="game-board" id="gameBoard"></div>
-
-        <div class="keyboard" id="keyboard">
-            <div class="keyboard-row">
-                <button class="key" data-key="Q">Q</button>
-                <button class="key" data-key="W">W</button>
-                <button class="key" data-key="E">E</button>
-                <button class="key" data-key="R">R</button>
-                <button class="key" data-key="T">T</button>
-                <button class="key" data-key="Y">Y</button>
-                <button class="key" data-key="U">U</button>
-                <button class="key" data-key="I">I</button>
-                <button class="key" data-key="O">O</button>
-                <button class="key" data-key="P">P</button>
-            </div>
-            <div class="keyboard-row">
-                <button class="key" data-key="A">A</button>
-                <button class="key" data-key="S">S</button>
-                <button class="key" data-key="D">D</button>
-                <button class="key" data-key="F">F</button>
-                <button class="key" data-key="G">G</button>
-                <button class="key" data-key="H">H</button>
-                <button class="key" data-key="J">J</button>
-                <button class="key" data-key="K">K</button>
-                <button class="key" data-key="L">L</button>
-            </div>
-            <div class="keyboard-row">
-                <button class="key wide" data-key="ENTER">ENTER</button>
-                <button class="key" data-key="Z">Z</button>
-                <button class="key" data-key="X">X</button>
-                <button class="key" data-key="C">C</button>
-                <button class="key" data-key="V">V</button>
-                <button class="key" data-key="B">B</button>
-                <button class="key" data-key="N">N</button>
-                <button class="key" data-key="M">M</button>
-                <button class="key wide" data-key="BACKSPACE">⌫</button>
-            </div>
+        <div class="kbd-row">
+            <button class="key" data-key="A">A</button>
+            <button class="key" data-key="S">S</button>
+            <button class="key" data-key="D">D</button>
+            <button class="key" data-key="F">F</button>
+            <button class="key" data-key="G">G</button>
+            <button class="key" data-key="H">H</button>
+            <button class="key" data-key="J">J</button>
+            <button class="key" data-key="K">K</button>
+            <button class="key" data-key="L">L</button>
         </div>
-
-        <div class="controls">
-            <button class="btn btn-primary" id="newGame">New Game</button>
-            <button class="btn btn-secondary" id="resetStats">Reset Stats</button>
+        <div class="kbd-row">
+            <button class="key wide" data-key="ENTER">Enter</button>
+            <button class="key" data-key="Z">Z</button>
+            <button class="key" data-key="X">X</button>
+            <button class="key" data-key="C">C</button>
+            <button class="key" data-key="V">V</button>
+            <button class="key" data-key="B">B</button>
+            <button class="key" data-key="N">N</button>
+            <button class="key" data-key="M">M</button>
+            <button class="key wide" data-key="BACKSPACE">⌫</button>
         </div>
     </div>
+</div>
 
-    <div class="confirmation-overlay" id="confirmationOverlay">
-        <div class="confirmation-dialog">
-            <div class="confirmation-title">Reset Statistics</div>
-            <div class="confirmation-message">Are you sure you want to reset all your game statistics? This action cannot be undone.</div>
-            <div class="confirmation-buttons">
-                <button class="confirmation-btn confirmation-btn-secondary" onclick="game.hideConfirmation()">Cancel</button>
-                <button class="confirmation-btn confirmation-btn-primary" onclick="game.confirmReset()">Reset</button>
+<!-- Toast -->
+<div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+<!-- Stats modal -->
+<div class="modal-overlay" id="statsModal" role="dialog" aria-modal="true" aria-label="Statistics">
+    <div class="modal">
+        <div class="modal-handle"></div>
+        <div class="modal-title">Statistics</div>
+        <div class="modal-stats-grid">
+            <div class="m-stat">
+                <div class="m-stat-value" id="mGames">0</div>
+                <div class="m-stat-label">Played</div>
+            </div>
+            <div class="m-stat">
+                <div class="m-stat-value" id="mWinPct">0</div>
+                <div class="m-stat-label">Win %</div>
+            </div>
+            <div class="m-stat">
+                <div class="m-stat-value" id="mStreak">0</div>
+                <div class="m-stat-label">Streak</div>
+            </div>
+            <div class="m-stat">
+                <div class="m-stat-value" id="mBest">0</div>
+                <div class="m-stat-label">Best</div>
             </div>
         </div>
+        <div class="dist-section-label">Guess Distribution</div>
+        <div id="distBars"></div>
+        <div class="modal-actions">
+            <button class="m-btn m-btn-secondary" id="resetBtn">Reset Stats</button>
+            <button class="m-btn m-btn-primary"   id="newGameFromModal">New Game</button>
+        </div>
     </div>
+</div>
 
-    <div class="toast" id="message"></div>
+<!-- Help modal -->
+<div class="modal-overlay" id="helpModal" role="dialog" aria-modal="true" aria-label="How to Play">
+    <div class="modal">
+        <div class="modal-handle"></div>
+        <div class="modal-title">How to Play</div>
+        <p class="help-rule">
+            Guess the <strong>WORDLE</strong> in 6 tries. Each guess must be a valid 5-letter word.
+            After each guess, the tiles reveal how close you were.
+        </p>
+        <div class="help-divider"></div>
+        <div class="help-eg">
+            <div class="help-tile correct">W</div>
+            <div class="help-eg-text"><strong>W</strong> is in the correct spot.</div>
+        </div>
+        <div class="help-eg">
+            <div class="help-tile present">I</div>
+            <div class="help-eg-text"><strong>I</strong> is in the word but wrong spot.</div>
+        </div>
+        <div class="help-eg">
+            <div class="help-tile absent">U</div>
+            <div class="help-eg-text"><strong>U</strong> is not in the word.</div>
+        </div>
+        <div class="help-divider"></div>
+        <p class="help-rule" style="font-size:13px;">
+            Play <strong>unlimited rounds</strong> — a fresh word every time you start a new game. Your stats are saved locally on your device.
+        </p>
+    </div>
+</div>
 
-    <script>
-        let WORD_LIST = [];
+<!-- Generic confirm dialog (reused for both new game + reset stats) -->
+<div class="confirm-overlay" id="confirmOverlay" role="dialog" aria-modal="true">
+    <div class="confirm-box">
+        <div class="confirm-title" id="confirmTitle"></div>
+        <div class="confirm-msg"   id="confirmMsg"></div>
+        <div class="confirm-btns">
+            <button class="confirm-btn confirm-btn-cancel" id="cancelConfirmBtn">Cancel</button>
+            <button class="confirm-btn" id="okConfirmBtn"></button>
+        </div>
+    </div>
+</div>
 
-        class WordleGame {
-            constructor() {
-                this.maxGuesses = 6;
-                this.wordLength = 5;
-                this.currentGuess = '';
-                this.guesses = [];
-                this.gameOver = false;
-                this.currentRow = 0;
-                this.targetWord = '';
-                this.keyboardState = {};
-                this.wordsLoaded = false;
-                
-                this.loadWords().then(() => {
-                    this.initializeGame();
-                    this.loadStats();
-                    this.setupEventListeners();
-                    this.createBoard();
-                    this.updateStatsDisplay();
-                });
+<script>
+/* ─── Word list ────────────────────────────────────────────────── */
+let WORDS = [];
+let toastTimer = null;
+
+/* ─── Game ─────────────────────────────────────────────────────── */
+class Wordle {
+    constructor() {
+        this.ROWS = 6;
+        this.COLS = 5;
+        this.target = '';
+        this.current = '';
+        this.guesses = [];
+        this.row = 0;
+        this.over = false;
+        this.loaded = false;
+        this.animating = false;
+        this.keyState = {}; // letter → 'correct' | 'present' | 'absent'
+
+        this._loadWords().then(() => {
+            this._loadStats();
+            this._buildBoard();
+            this._bindEvents();
+            this._newRound();
+            this._renderStats();
+            document.getElementById('loadingScreen').classList.add('fade-out');
+            setTimeout(() => { document.getElementById('loadingScreen').remove(); }, 500);
+        });
+    }
+
+    /* ── Init ───────────────────────────────────────────────────── */
+    async _loadWords() {
+        try {
+            const r = await fetch('wordle-words.txt');
+            if (!r.ok) throw new Error();
+            const txt = await r.text();
+            WORDS = txt.split('\n').map(w => w.trim().toUpperCase()).filter(w => w.length === 5);
+            if (!WORDS.length) throw new Error();
+        } catch {
+            // Fallback word list so the game still works standalone
+            WORDS = ['CRANE','SLATE','TRACE','RAISE','AUDIO','HOUSE','LIGHT','WATER','MUSIC','WORLD',
+                     'PLANT','GRAIN','STARE','BEACH','BLEND','CLOUD','PRIDE','FLAME','NORTH','SOUTH',
+                     'STORY','BRUSH','CHARM','DRIVE','ELBOW','FANCY','GLOOM','HAPPY','INDEX','JUDGE',
+                     'KNEEL','LEMON','MONEY','NINJA','OCEAN','PIANO','QUEEN','ROVER','SUGAR','TIGER',
+                     'ULTRA','VIBES','WATCH','YEARN','ZEBRA','AFFIX','BANJO','CARGO','DAISY','EQUAL'];
+        }
+        this.loaded = true;
+    }
+
+    _loadStats() {
+        try {
+            const s = localStorage.getItem('wStats2');
+            this.stats = s ? JSON.parse(s) : this._blankStats();
+        } catch { this.stats = this._blankStats(); }
+    }
+
+    _blankStats() {
+        return { played: 0, won: 0, streak: 0, maxStreak: 0, dist: [0,0,0,0,0,0] };
+    }
+
+    _saveStats() {
+        try { localStorage.setItem('wStats2', JSON.stringify(this.stats)); } catch {}
+    }
+
+    _buildBoard() {
+        const board = document.getElementById('board');
+        board.innerHTML = '';
+        for (let r = 0; r < this.ROWS; r++) {
+            const row = document.createElement('div');
+            row.className = 'tile-row';
+            row.dataset.row = r;
+            for (let c = 0; c < this.COLS; c++) {
+                const tile = document.createElement('div');
+                tile.className = 'tile';
+                tile.dataset.r = r;
+                tile.dataset.c = c;
+                tile.setAttribute('aria-label', `Row ${r+1}, column ${c+1}`);
+                row.appendChild(tile);
             }
+            board.appendChild(row);
+        }
+    }
 
-            async loadWords() {
-                try {
-                    const response = await fetch('wordle-words.txt');
-                    const text = await response.text();
-                    WORD_LIST = text.split('\n')
-                        .map(word => word.trim().toUpperCase())
-                        .filter(word => word.length === 5);
-                    this.wordsLoaded = true;
-                } catch (error) {
-                    console.error('Failed to load word list:', error);
-                    WORD_LIST = ['WORDS', 'GAMES', 'PHONE', 'LIGHT', 'MUSIC', 'WATER', 'HOUSE', 'PAPER', 'MONEY', 'WORLD'];
-                    this.wordsLoaded = true;
+    _newRound() {
+        this.target  = WORDS[Math.floor(Math.random() * WORDS.length)];
+        this.current = '';
+        this.guesses = [];
+        this.row     = 0;
+        this.over    = false;
+        this.animating = false;
+        this.keyState  = {};
+    }
+
+    _bindEvents() {
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey || e.altKey || e.metaKey) return;
+            const k = e.key.toUpperCase();
+            if (k === 'ENTER') { e.preventDefault(); this._input('ENTER'); }
+            else if (k === 'BACKSPACE') this._input('BACKSPACE');
+            else if (/^[A-Z]$/.test(k)) this._input(k);
+        });
+
+        document.getElementById('keyboard').addEventListener('pointerdown', e => {
+            e.preventDefault(); // prevents mobile double-fire
+            const btn = e.target.closest('[data-key]');
+            if (btn) this._input(btn.dataset.key);
+        });
+
+        // Header buttons
+        document.getElementById('newGameBtn').addEventListener('click', () => {
+            this._confirm({
+                title:   'New Game?',
+                msg:     'Your current game will be lost. Start a fresh word?',
+                label:   'New Game',
+                danger:  false,
+                onOk:    () => this._startNew()
+            });
+        });
+        document.getElementById('statsBtn').addEventListener('click', () => this._openModal('statsModal'));
+        document.getElementById('helpBtn').addEventListener('click', () => this._openModal('helpModal'));
+
+        // Stats modal actions
+        document.getElementById('newGameFromModal').addEventListener('click', () => {
+            this._closeModal('statsModal');
+            setTimeout(() => this._confirm({
+                title:  'New Game?',
+                msg:    'Your current game will be lost. Start a fresh word?',
+                label:  'New Game',
+                danger: false,
+                onOk:   () => this._startNew()
+            }), 200);
+        });
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            this._closeModal('statsModal');
+            setTimeout(() => this._confirm({
+                title:  'Reset Stats?',
+                msg:    'All your game statistics will be permanently deleted. This cannot be undone.',
+                label:  'Reset',
+                danger: true,
+                onOk:   () => {
+                    this.stats = this._blankStats();
+                    this._saveStats();
+                    this._renderStats();
+                    this._toast('Stats reset');
                 }
+            }), 200);
+        });
+
+        // Generic confirm overlay
+        document.getElementById('cancelConfirmBtn').addEventListener('click', () => {
+            document.getElementById('confirmOverlay').classList.remove('show');
+        });
+        document.getElementById('okConfirmBtn').addEventListener('click', () => {
+            document.getElementById('confirmOverlay').classList.remove('show');
+            if (this._confirmCallback) this._confirmCallback();
+        });
+
+        // Backdrop close
+        ['statsModal', 'helpModal'].forEach(id => {
+            document.getElementById(id).addEventListener('pointerdown', e => {
+                if (e.target === document.getElementById(id)) this._closeModal(id);
+            });
+        });
+    }
+
+    /* ── Core input ─────────────────────────────────────────────── */
+    _input(key) {
+        if (!this.loaded || this.over || this.animating) return;
+
+        if (key === 'ENTER') {
+            this._submit();
+        } else if (key === 'BACKSPACE') {
+            if (this.current.length > 0) {
+                this.current = this.current.slice(0, -1);
+                this._renderRow();
             }
-
-            initializeGame() {
-                this.targetWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
-                this.currentGuess = '';
-                this.guesses = [];
-                this.gameOver = false;
-                this.currentRow = 0;
-                this.keyboardState = {};
-                this.clearMessage();
-            }
-
-            loadStats() {
-                const stats = localStorage.getItem('wordleStats');
-                if (stats) {
-                    this.stats = JSON.parse(stats);
-                } else {
-                    this.stats = {
-                        gamesPlayed: 0,
-                        gamesWon: 0,
-                        currentStreak: 0,
-                        maxStreak: 0,
-                        guessDistribution: [0, 0, 0, 0, 0, 0]
-                    };
-                }
-            }
-
-            saveStats() {
-                localStorage.setItem('wordleStats', JSON.stringify(this.stats));
-            }
-
-            updateStatsDisplay() {
-                document.getElementById('gamesPlayed').textContent = this.stats.gamesPlayed;
-                document.getElementById('gamesWon').textContent = this.stats.gamesWon;
-                document.getElementById('winPercentage').textContent = 
-                    this.stats.gamesPlayed > 0 ? Math.round((this.stats.gamesWon / this.stats.gamesPlayed) * 100) + '%' : '0%';
-                document.getElementById('currentStreak').textContent = this.stats.currentStreak;
-            }
-
-            setupEventListeners() {
-                document.addEventListener('keydown', (e) => this.handleKeyPress(e));
-                document.getElementById('keyboard').addEventListener('click', (e) => this.handleKeyClick(e));
-                document.getElementById('newGame').addEventListener('click', () => this.newGame());
-                document.getElementById('resetStats').addEventListener('click', () => this.resetStats());
-            }
-
-            createBoard() {
-                const board = document.getElementById('gameBoard');
-                board.innerHTML = '';
-                
-                for (let i = 0; i < this.maxGuesses; i++) {
-                    const row = document.createElement('div');
-                    row.className = 'guess-row';
-                    
-                    for (let j = 0; j < this.wordLength; j++) {
-                        const box = document.createElement('div');
-                        box.className = 'letter-box';
-                        box.dataset.row = i;
-                        box.dataset.col = j;
-                        row.appendChild(box);
-                    }
-                    
-                    board.appendChild(row);
-                }
-            }
-
-            handleKeyPress(e) {
-                if (this.gameOver || !this.wordsLoaded) return;
-                
-                const key = e.key.toUpperCase();
-                
-                if (key === 'ENTER') {
-                    this.submitGuess();
-                } else if (key === 'BACKSPACE') {
-                    this.deleteLetter();
-                } else if (key.match(/^[A-Z]$/) && this.currentGuess.length < this.wordLength) {
-                    this.addLetter(key);
-                }
-            }
-
-            handleKeyClick(e) {
-                if (this.gameOver || !this.wordsLoaded) return;
-                
-                const key = e.target.dataset.key;
-                if (!key) return;
-                
-                if (key === 'ENTER') {
-                    this.submitGuess();
-                } else if (key === 'BACKSPACE') {
-                    this.deleteLetter();
-                } else if (key.match(/^[A-Z]$/) && this.currentGuess.length < this.wordLength) {
-                    this.addLetter(key);
-                }
-            }
-
-            addLetter(letter) {
-                if (this.currentGuess.length < this.wordLength) {
-                    this.currentGuess += letter;
-                    this.updateCurrentRow();
-                }
-            }
-
-            deleteLetter() {
-                if (this.currentGuess.length > 0) {
-                    this.currentGuess = this.currentGuess.slice(0, -1);
-                    this.updateCurrentRow();
-                }
-            }
-
-            updateCurrentRow() {
-                const row = document.querySelector(`[data-row="${this.currentRow}"]`).parentElement;
-                const boxes = row.querySelectorAll('.letter-box');
-                
-                boxes.forEach((box, index) => {
-                    if (index < this.currentGuess.length) {
-                        box.textContent = this.currentGuess[index];
-                        box.classList.add('filled');
-                    } else {
-                        box.textContent = '';
-                        box.classList.remove('filled');
-                    }
-                });
-            }
-
-            submitGuess() {
-                if (this.currentGuess.length !== this.wordLength) {
-                    this.showMessage('Not enough letters!', 'error');
-                    return;
-                }
-
-                if (!WORD_LIST.includes(this.currentGuess)) {
-                    this.shakeCurrentRow();
-                    setTimeout(() => {
-                        this.currentGuess = '';
-                        this.updateCurrentRow();
-                    }, 500);
-                    return;
-                }
-
-                const result = this.checkGuess(this.currentGuess);
-                this.animateGuess(result);
-                this.updateKeyboard(result);
-                this.guesses.push(this.currentGuess);
-                
-                if (this.currentGuess === this.targetWord) {
-                    this.gameOver = true;
-                    this.stats.gamesWon++;
-                    this.stats.currentStreak++;
-                    this.stats.maxStreak = Math.max(this.stats.maxStreak, this.stats.currentStreak);
-                    this.stats.guessDistribution[this.currentRow]++;
-                    this.showMessage(`Congratulations! You found the word in ${this.currentRow + 1} guesses!`, 'success');
-                } else if (this.currentRow === this.maxGuesses - 1) {
-                    this.gameOver = true;
-                    this.stats.currentStreak = 0;
-                    this.showMessage(`Game Over! The word was: ${this.targetWord}`, 'error');
-                }
-                
-                if (this.gameOver) {
-                    this.stats.gamesPlayed++;
-                    this.saveStats();
-                    this.updateStatsDisplay();
-                }
-                
-                this.currentRow++;
-                this.currentGuess = '';
-            }
-
-            shakeCurrentRow() {
-                const row = document.querySelector(`[data-row="${this.currentRow}"]`).parentElement;
-                const boxes = row.querySelectorAll('.letter-box');
-                
-                boxes.forEach(box => {
-                    box.classList.add('shake');
-                    setTimeout(() => {
-                        box.classList.remove('shake');
-                    }, 500);
-                });
-            }
-
-            checkGuess(guess) {
-                const result = [];
-                const targetLetters = this.targetWord.split('');
-                const guessLetters = guess.split('');
-                
-                for (let i = 0; i < this.wordLength; i++) {
-                    if (guessLetters[i] === targetLetters[i]) {
-                        result[i] = 'correct';
-                        targetLetters[i] = null;
-                    }
-                }
-                
-                for (let i = 0; i < this.wordLength; i++) {
-                    if (result[i]) continue;
-                    
-                    const letterIndex = targetLetters.indexOf(guessLetters[i]);
-                    if (letterIndex !== -1) {
-                        result[i] = 'present';
-                        targetLetters[letterIndex] = null;
-                    } else {
-                        result[i] = 'absent';
-                    }
-                }
-                
-                return result;
-            }
-
-            animateGuess(result) {
-                const row = document.querySelector(`[data-row="${this.currentRow}"]`).parentElement;
-                const boxes = row.querySelectorAll('.letter-box');
-                
-                boxes.forEach((box, index) => {
-                    setTimeout(() => {
-                        box.classList.add(result[index]);
-                    }, index * 100);
-                });
-            }
-
-            updateKeyboard(result) {
-                const guess = this.currentGuess;
-                
-                for (let i = 0; i < guess.length; i++) {
-                    const letter = guess[i];
-                    const status = result[i];
-                    
-                    if (!this.keyboardState[letter] || 
-                        (this.keyboardState[letter] === 'absent' && status !== 'absent') ||
-                        (this.keyboardState[letter] === 'present' && status === 'correct')) {
-                        this.keyboardState[letter] = status;
-                        
-                        const key = document.querySelector(`[data-key="${letter}"]`);
-                        if (key) {
-                            key.classList.remove('correct', 'present', 'absent');
-                            key.classList.add(status);
-                        }
-                    }
-                }
-            }
-
-            showMessage(text, type) {
-                const messageEl = document.getElementById('message');
-                messageEl.textContent = text;
-                messageEl.className = `toast ${type} show`;
-                
-                setTimeout(() => {
-                    messageEl.classList.remove('show');
-                }, 3000);
-            }
-
-            clearMessage() {
-                const messageEl = document.getElementById('message');
-                messageEl.classList.remove('show');
-            }
-
-            newGame() {
-                if (!this.wordsLoaded) {
-                    this.showMessage('Loading words...', 'info');
-                    return;
-                }
-                this.initializeGame();
-                this.createBoard();
-                document.querySelectorAll('.key').forEach(key => {
-                    key.classList.remove('correct', 'present', 'absent');
-                });
-            }
-
-            resetStats() {
-                this.showConfirmation();
-            }
-
-            showConfirmation() {
-                const overlay = document.getElementById('confirmationOverlay');
-                overlay.classList.add('show');
-            }
-
-            hideConfirmation() {
-                const overlay = document.getElementById('confirmationOverlay');
-                overlay.classList.remove('show');
-            }
-
-            confirmReset() {
-                this.stats = {
-                    gamesPlayed: 0,
-                    gamesWon: 0,
-                    currentStreak: 0,
-                    maxStreak: 0,
-                    guessDistribution: [0, 0, 0, 0, 0, 0]
-                };
-                this.saveStats();
-                this.updateStatsDisplay();
-                this.hideConfirmation();
-                this.showMessage('Statistics reset!', 'info');
+        } else if (/^[A-Z]$/.test(key) && this.current.length < this.COLS) {
+            this.current += key;
+            this._renderRow();
+            // Pop animation on the just-typed tile
+            const tile = this._tile(this.row, this.current.length - 1);
+            if (tile) {
+                tile.classList.remove('pop');
+                void tile.offsetWidth; // force reflow
+                tile.classList.add('pop');
+                tile.addEventListener('animationend', () => tile.classList.remove('pop'), { once: true });
             }
         }
+    }
 
-        const game = new WordleGame();
-    </script>
+    _submit() {
+        if (this.current.length !== this.COLS) {
+            this._toast('Not enough letters');
+            this._shakeRow(this.row);
+            return;
+        }
+        if (!WORDS.includes(this.current)) {
+            this._toast('Not in word list');
+            this._shakeRow(this.row);
+            return;
+        }
+
+        const result     = this._check(this.current);
+        const guess      = this.current;
+        const guessRow   = this.row;
+
+        this.guesses.push(guess);
+        this.row++;
+        this.current   = '';
+        this.animating = true;
+
+        // Reveal tiles with flip animation
+        this._reveal(guessRow, result, () => {
+            this.animating = false;
+            // Update keyboard AFTER reveal completes
+            this._updateKeys(result, guess);
+
+            const won  = guess === this.target;
+            const lost = !won && this.row === this.ROWS;
+
+            if (won) {
+                this.over = true;
+                this.stats.played++;
+                this.stats.won++;
+                this.stats.streak++;
+                this.stats.maxStreak = Math.max(this.stats.maxStreak, this.stats.streak);
+                this.stats.dist[guessRow]++;
+                this._saveStats();
+                this._renderStats();
+
+                const msgs = ['Genius! 🧠', 'Magnificent!', 'Impressive!', 'Splendid!', 'Great!', 'Phew! 😅'];
+                setTimeout(() => {
+                    this._toast(msgs[guessRow] || 'Nice!', 2200);
+                    this._bounceRow(guessRow);
+                }, 120);
+                setTimeout(() => this._openModal('statsModal'), 2800);
+
+            } else if (lost) {
+                this.over = true;
+                this.stats.played++;
+                this.stats.streak = 0;
+                this._saveStats();
+                this._renderStats();
+                setTimeout(() => this._toast(this.target, 4000), 200);
+                setTimeout(() => this._openModal('statsModal'), 3200);
+            }
+        });
+    }
+
+    /* ── Guess checking ─────────────────────────────────────────── */
+    _check(guess) {
+        const result  = new Array(this.COLS).fill('absent');
+        const tLeft   = this.target.split('');
+        const gLeft   = guess.split('');
+
+        // Pass 1: correct positions
+        for (let i = 0; i < this.COLS; i++) {
+            if (gLeft[i] === tLeft[i]) {
+                result[i] = 'correct';
+                tLeft[i]  = null;
+                gLeft[i]  = null;
+            }
+        }
+        // Pass 2: present but wrong position
+        for (let i = 0; i < this.COLS; i++) {
+            if (gLeft[i] === null) continue;
+            const idx = tLeft.indexOf(gLeft[i]);
+            if (idx !== -1) {
+                result[i]  = 'present';
+                tLeft[idx] = null;
+            }
+        }
+        return result;
+    }
+
+    /* ── Rendering ──────────────────────────────────────────────── */
+    _tile(r, c) {
+        return document.querySelector(`.tile[data-r="${r}"][data-c="${c}"]`);
+    }
+
+    _renderRow() {
+        for (let c = 0; c < this.COLS; c++) {
+            const tile = this._tile(this.row, c);
+            if (!tile) continue;
+            const letter = this.current[c] || '';
+            tile.textContent = letter;
+            tile.classList.toggle('filled', letter !== '');
+        }
+    }
+
+    _reveal(rowIdx, result, onDone) {
+        const STAGGER = 90;  // ms between tiles
+        const HALF    = 250; // ms to midpoint (color switch)
+        const FULL    = 500; // ms total flip duration
+
+        for (let c = 0; c < this.COLS; c++) {
+            const tile  = this._tile(rowIdx, c);
+            const delay = c * STAGGER;
+            if (!tile) continue;
+
+            setTimeout(() => {
+                tile.classList.add('flip');
+
+                // Switch color at midpoint of flip (tile is flat / invisible)
+                setTimeout(() => {
+                    tile.classList.remove('filled');
+                    tile.classList.add(result[c]);
+                }, HALF);
+
+                setTimeout(() => {
+                    tile.classList.remove('flip');
+                }, FULL);
+            }, delay);
+        }
+
+        // Fire callback after last tile finishes
+        const totalTime = (this.COLS - 1) * STAGGER + FULL + 40;
+        setTimeout(onDone, totalTime);
+    }
+
+    _updateKeys(result, guess) {
+        // Priority: correct > present > absent (never downgrade)
+        const priority = { correct: 3, present: 2, absent: 1 };
+        for (let i = 0; i < guess.length; i++) {
+            const letter = guess[i];
+            const status = result[i];
+            const current = this.keyState[letter];
+            if (!current || priority[status] > priority[current]) {
+                this.keyState[letter] = status;
+                const keyEl = document.querySelector(`[data-key="${letter}"]`);
+                if (keyEl) {
+                    keyEl.classList.remove('correct', 'present', 'absent');
+                    keyEl.classList.add(status);
+                }
+            }
+        }
+    }
+
+    _shakeRow(rowIdx) {
+        const tiles = document.querySelectorAll(`.tile[data-r="${rowIdx}"]`);
+        tiles.forEach(tile => {
+            tile.classList.remove('shake');
+            void tile.offsetWidth;
+            tile.classList.add('shake');
+            tile.addEventListener('animationend', () => tile.classList.remove('shake'), { once: true });
+        });
+    }
+
+    _bounceRow(rowIdx) {
+        const tiles = document.querySelectorAll(`.tile[data-r="${rowIdx}"]`);
+        tiles.forEach((tile, i) => {
+            setTimeout(() => {
+                tile.classList.add('bounce');
+                tile.addEventListener('animationend', () => tile.classList.remove('bounce'), { once: true });
+            }, i * 70);
+        });
+    }
+
+    /* ── Confirm helper ─────────────────────────────────────────── */
+    _confirm({ title, msg, label, danger, onOk }) {
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmMsg').textContent   = msg;
+        const okBtn = document.getElementById('okConfirmBtn');
+        okBtn.textContent = label;
+        okBtn.className   = `confirm-btn ${danger ? 'confirm-btn-danger' : 'confirm-btn-primary-action'}`;
+        this._confirmCallback = onOk;
+        document.getElementById('confirmOverlay').classList.add('show');
+    }
+
+    /* ── New game ───────────────────────────────────────────────── */
+    _startNew() {
+        this._newRound();
+        this._buildBoard();
+        document.querySelectorAll('.key').forEach(k => {
+            k.className = k.classList.contains('wide') ? 'key wide' : 'key';
+        });
+    }
+
+    /* ── Stats display ──────────────────────────────────────────── */
+    _renderStats() {
+        const { played, won, streak, maxStreak, dist } = this.stats;
+        const pct = played > 0 ? Math.round(won / played * 100) : 0;
+
+        // Strip stats
+        document.getElementById('sGames').textContent  = played;
+        document.getElementById('sWins').textContent   = won;
+        document.getElementById('sWinPct').textContent = pct + '%';
+        document.getElementById('sStreak').textContent = streak;
+        document.getElementById('sBest').textContent   = maxStreak;
+
+        // Modal stats
+        document.getElementById('mGames').textContent  = played;
+        document.getElementById('mWinPct').textContent = pct;
+        document.getElementById('mStreak').textContent = streak;
+        document.getElementById('mBest').textContent   = maxStreak;
+
+        // Distribution bars
+        const maxVal = Math.max(...dist, 1);
+        const lastWinRow = this.over && this.guesses.length <= this.ROWS && this.guesses[this.guesses.length - 1] === this.target
+            ? this.guesses.length - 1 : -1;
+
+        document.getElementById('distBars').innerHTML = dist.map((count, i) => `
+            <div class="dist-row">
+                <div class="dist-num">${i + 1}</div>
+                <div class="dist-track">
+                    <div class="dist-fill ${i === lastWinRow ? 'current-win' : ''}"
+                         style="width:${count === 0 ? 0 : Math.max(count / maxVal * 100, 12)}%">
+                        ${count}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    /* ── Modals ─────────────────────────────────────────────────── */
+    _openModal(id) {
+        if (id === 'statsModal') this._renderStats();
+        document.getElementById(id).classList.add('show');
+    }
+
+    _closeModal(id) {
+        document.getElementById(id).classList.remove('show');
+    }
+
+    /* ── Toast ──────────────────────────────────────────────────── */
+    _toast(msg, duration = 1700) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove('show'), duration);
+    }
+}
+
+/* ── Boot ───────────────────────────────────────────────────────── */
+const game = new Wordle();
+</script>
 </body>
 </html>
